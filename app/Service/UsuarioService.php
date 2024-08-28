@@ -15,24 +15,107 @@ class UsuarioService
         return $user;
     }
 
-    public function update(){
+    public function update(array $dados){
+        $usuario = Usuario::find($dados['id']);
+        if($usuario == null){
+            return [
+                'status'=> false,
+                'message'=> 'usuario nao econtrado'
+            ];
+        }
 
+        if(isset($dados['password'])){
+            $usuario->password = $dados['password'];
+        }
+
+        if(isset($dados['nome'])){
+            $usuario->nome = $dados['nome'];
+        }
+
+        if(isset($dados['email'])){
+            $usuario->email = $dados['email'];
+        }
+        
+        $usuario->save();
+        return [
+            'status'=> true,
+            'message'=> 'Atualizado com sucesso'
+        ];
     }
 
-    public function delete(){
+    public function delete($id){
+        $usuario = Usuario::find($id);
+        if($usuario == null){
+            return [
+                'status'=> false,
+                'message'=> 'Usuario nao encontrado'
+            ];
+        }
 
+        $usuario->delete();
+
+        return [
+            'statua'=> true,
+            'message'=> 'Usuario excluido com sucesso'
+        ];
     }
 
-    public function findById(){
+    public function findById($id){
+        $usuario = Usuario::find($id);
 
+        if($usuario == null){
+            return [
+                'status'=> false,
+                'message'=> 'Usuario não encontrado'
+            ];
+        }
+
+        return [
+            'status'=> true,
+            'message'=> 'Usuario encontrado',
+            'data'=> $usuario
+        ];
     }
 
     public function getAll(){
-
+        $usuario = Usuario::all();
+        return [
+            'status'=> true,
+            'message'=> 'Pesquisa efetuada com sucesso',
+            'data'=> $usuario
+        ];
     }
 
-    public function serchByName(){
+    public function searchByName($nome){
+        $usuario = Usuario::where('nome', 'like', '%'. $nome . '%')->get();
+        if($usuario->isEmpty()){
+            return [
+                'status'=> false,
+                'message'=> 'Sem Resultados'
+            ];
+        }
 
+        return [
+            'status'=> true,
+            'message'=> 'Resultados Encontrados',
+            'data'=> $usuario
+        ];
+    }
+
+    public function searchByEmail($email){
+        $usuario = Usuario::where('email', 'like', '%'. $email . '%')->get();
+        if($usuario->isEmpty()){
+            return [
+                'status'=> false,
+                'message'=> 'Sem Resultados'
+            ];
+        }
+
+        return [
+            'status'=> true,
+            'message'=> 'Resultados Encontrados',
+            'data'=> $usuario
+        ];
     }
 
 }
